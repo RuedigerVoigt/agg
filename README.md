@@ -4,6 +4,11 @@
 ![Last commit](https://img.shields.io/github/last-commit/RuedigerVoigt/agg)
 ![pypi version](https://img.shields.io/pypi/v/agg)
 
+A Python library to aggregate files and data. This initial release supports merging two or more csv files.
+
+Features:
+  * Type Hints
+
 ## Example
 
 ```python
