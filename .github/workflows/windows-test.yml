@@ -1,4 +1,4 @@
-# This workflow runs Unit-Tests for exoskeleton on Windows
+# This workflow runs Unit-Tests for agg on Windows
 # with the two latest python versions.
 # Flake8 and mypy will be run with the Ubuntu Workflow.
 # There is no need to repeat this here.
