@@ -18,7 +18,7 @@ import shutil
 import tempfile
 from typing import Union, Optional
 
-#3rd party
+# 3rd party
 import userprovided
 
 
@@ -36,6 +36,16 @@ def merge_csv(files_to_merge: tuple,
         first_line_is_header: optional; if True agg will remove the first
             line of all csv files except for the first. If not set agg will
             guess if the first line is a header or not.
+
+    Returns:
+        A dictionary containing:
+            * a SHA256 hash of the result file,
+            * its absolute path,
+            * its size in bytes.
+        E.g.:
+        {'sha256hash': 'fff30942d3d042c5128062d1a29b2c50494c3d1d033749a58268d2e687fc98c6',
+         'file_path': '/home/exampleuser/merged_file',
+         'file_size_bytes': 76}
 
     Raises:
         ValueError: If the folder for the target file does not exist.
@@ -112,5 +122,8 @@ def merge_csv(files_to_merge: tuple,
     # pathlib.Path() automatically takes care of that:
     full_path = str(pathlib.Path(output_file).resolve())
     result['file_path'] = full_path
+
+    # assigning an int causes a mypy error because other values were string
+    result['file_size_bytes'] = pathlib.Path(output_file).stat().st_size  # type: ignore
 
     return result
