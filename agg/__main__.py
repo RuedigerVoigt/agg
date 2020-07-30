@@ -18,10 +18,13 @@ import shutil
 import tempfile
 from typing import Union, Optional
 
+#3rd party
+import userprovided
+
 
 def merge_csv(files_to_merge: tuple,
               output_file: Union[str, pathlib.Path],
-              first_line_is_header: Optional[bool] = None):
+              first_line_is_header: Optional[bool] = None) -> dict:
     """Merges multiple CSV files in the order they are specified.
        This will overwrite any existing file with the same name.
 
@@ -100,3 +103,8 @@ def merge_csv(files_to_merge: tuple,
         os.close(temp_handle)
         os.remove(temp_path)
         gc.collect()
+
+    result = dict()
+    result['sha256hash'] = userprovided.hash.calculate_file_hash(
+        pathlib.Path(output_file), 'sha256')
+    return result
