@@ -8,4 +8,8 @@ my_files = ('testfiles/file_01.csv', 'testfiles/file_02.csv')
 # Merge the CSV-files - in the specified order - into a new file called
 # "merged_file". Meanwhile copy the header / first line only once from
 # first file
-agg.merge_csv(my_files, 'merged_file', True)
+file_data = agg.merge_csv(my_files, 'merged_file', True)
+
+# The method returned a dictionary with some information
+# about the output file:
+print(file_data)
