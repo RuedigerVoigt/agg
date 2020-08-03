@@ -13,3 +13,5 @@ file_data = agg.merge_csv(my_files, 'merged_file', True)
 # The method returned a dictionary with some information
 # about the output file:
 print(file_data)
+
+print(file_data['file_path'])
