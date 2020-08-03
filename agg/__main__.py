@@ -16,7 +16,7 @@ import os
 import pathlib
 import shutil
 import tempfile
-from typing import Union, Optional
+from typing import Optional, Union
 
 # 3rd party
 import userprovided
@@ -73,7 +73,6 @@ def merge_csv(files_to_merge: tuple,
         first_line_is_header = csv.Sniffer().has_header(first_file_ram)
         if first_line_is_header:
             logging.debug('Detected first line is a header.')
-            print(first_file_ram.readline())
         else:
             logging.debug("Detected first line is *not* a header.")
         # The file might be huge. So explicitly free the memory
@@ -124,7 +123,12 @@ def merge_csv(files_to_merge: tuple,
         os.remove(temp_path)
         gc.collect()
 
+    # Here a TypedDict would be better for mypy to check typing, but PEP 589
+    # was accepted only as recently as Python 3.8. Therefore as long versions
+    # before that are supported by agg, mypy warning about the 'wrong' type
+    # assigned in the result dictionary will be suppressed.
     result = dict()
+
     result['sha256hash'] = userprovided.hash.calculate_file_hash(
         pathlib.Path(output_file), 'sha256')
 
@@ -133,11 +137,10 @@ def merge_csv(files_to_merge: tuple,
     full_path = str(pathlib.Path(output_file).resolve())
     result['file_path'] = full_path
 
-    result['line_count'] = len(open(full_path).readlines())
+    result['line_count'] = len(open(full_path).readlines())  # type: ignore
 
-    # assigning an int causes a mypy error because other values were string
     result['file_size_bytes'] = pathlib.Path(output_file).stat().st_size  # type: ignore
 
-    result['merged_files'] = merged_files
+    result['merged_files'] = merged_files  # type: ignore
 
     return result
