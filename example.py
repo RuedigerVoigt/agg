@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 import agg
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
 # tuples are ordered:
 my_files = ('testfiles/file_01.csv', 'testfiles/file_02.csv')
 
