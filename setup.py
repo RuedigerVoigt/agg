@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="agg",
-    version="0.1.0",
+    version="0.2.0",
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
     description="Aggregate files and data",
