@@ -41,11 +41,14 @@ def merge_csv(files_to_merge: tuple,
         A dictionary containing:
             * a SHA256 hash of the result file,
             * its absolute path,
-            * its size in bytes.
+            * its size in bytes,
+            * a list of the files merged (absolute path).
         E.g.:
         {'sha256hash': 'fff30942d3d042c5128062d1a29b2c50494c3d1d033749a58268d2e687fc98c6',
          'file_path': '/home/exampleuser/merged_file',
-         'file_size_bytes': 76}
+         'file_size_bytes': 76,
+         'merged_files': ['/home/exampleuser/file_01.csv',
+                          '/home/exampleuser/file_02.csv']}
 
     Raises:
         ValueError: If the folder for the target file does not exist.
@@ -68,6 +71,7 @@ def merge_csv(files_to_merge: tuple,
         first_line_is_header = csv.Sniffer().has_header(first_file_ram)
         if first_line_is_header:
             logging.debug('Detected first line is a header.')
+            print(first_file_ram.readline())
         else:
             logging.debug("Detected first line is *not* a header.")
         # The file might be huge. So explicitly free the memory
@@ -75,6 +79,8 @@ def merge_csv(files_to_merge: tuple,
         gc.collect()
 
     # ############## Merge Files ##############
+
+    merged_files = list()
 
     try:
         # Do NOT use tempfile.NamedTemporaryFile as it is platform dependent
@@ -95,6 +101,8 @@ def merge_csv(files_to_merge: tuple,
                         # Using csv.writerow ensures that linebreaks are added
                         # even if the last line of a file did not have one.
                         csvwrt.writerow(line)
+                # Add the full path to the list of processed files:
+                merged_files.append(str(pathlib.Path(csvfile).resolve()))
         try:
             # https://github.com/python/mypy/issues/7082 :
             shutil.copyfile(temp_path, output_file, follow_symlinks=True)  # type: ignore
@@ -125,5 +133,7 @@ def merge_csv(files_to_merge: tuple,
 
     # assigning an int causes a mypy error because other values were string
     result['file_size_bytes'] = pathlib.Path(output_file).stat().st_size  # type: ignore
+
+    result['merged_files'] = merged_files
 
     return result
