@@ -41,12 +41,14 @@ def merge_csv(files_to_merge: tuple,
         A dictionary containing:
             * a SHA256 hash of the result file,
             * its absolute path,
+            * a boolean indicating whether the first line is a header or not,
             * its size in bytes,
             * its number of lines (including the header),
             * a list of the files merged (absolute path).
         E.g.:
         {'sha256hash': 'fff30942d3d042c5128062d1a29b2c50494c3d1d033749a58268d2e687fc98c6',
          'file_path': '/home/exampleuser/merged_file',
+         'first_line_is_header': True,
          'file_size_bytes': 76,
          'line_count': 8,
          'merged_files': ['/home/exampleuser/file_01.csv',
@@ -136,6 +138,8 @@ def merge_csv(files_to_merge: tuple,
     # pathlib.Path() automatically takes care of that:
     full_path = str(pathlib.Path(output_file).resolve())
     result['file_path'] = full_path
+
+    result['first_line_is_header'] = first_line_is_header  # type: ignore
 
     result['line_count'] = len(open(full_path).readlines())  # type: ignore
 
