@@ -134,6 +134,8 @@ def merge_csv(files_to_merge: tuple,
     result['sha256hash'] = userprovided.hash.calculate_file_hash(
         pathlib.Path(output_file), 'sha256')
 
+    result['file_name'] = str(pathlib.Path(output_file).name)
+
     # The format of the absolute path is dependent on the OS, but
     # pathlib.Path() automatically takes care of that:
     full_path = str(pathlib.Path(output_file).resolve())
