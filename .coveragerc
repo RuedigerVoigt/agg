@@ -1,0 +1,7 @@
+[run]
+branch = False
+cover_pylib = False
+source = agg
+
+[html]
+title = Coverage Report for the agg Python Package
