@@ -4,8 +4,11 @@
 """
 Agg
 ~~~~~~~~~~~~~~~~~~~~~
-Agg aggregates files / data. This initial version only
-supports merging CSV files-
+Agg aggregates files / data. This initial version supports merging CSV files-
+
+Source: https://github.com/RuedigerVoigt/agg
+(c) 2020-2021: Rüdiger Voigt
+Released under the Apache License 2.0
 """
 
 # python standard library:
@@ -18,7 +21,7 @@ import shutil
 import tempfile
 from typing import Optional, Union
 
-# 3rd party
+# sister projects
 import userprovided
 
 
@@ -34,7 +37,7 @@ def merge_csv(files_to_merge: tuple,
         output_file: The path to the result file. The folder must already
             exist. An existing file with the same name will be overwritten.
         first_line_is_header: optional; if True agg will remove the first
-            line of all csv files except for the first. If not set agg will
+            line of all CSV files except for the first. If not set agg will
             guess if the first line is a header or not.
 
     Returns:
@@ -58,6 +61,7 @@ def merge_csv(files_to_merge: tuple,
         ValueError: If the folder for the target file does not exist.
         FileNotFoundError: If one of the specified files does not exist.
     """
+    # pylint: disable=too-many-locals
 
     # ############## Check Path ##############
 
@@ -109,14 +113,14 @@ def merge_csv(files_to_merge: tuple,
         try:
             # https://github.com/python/mypy/issues/7082 :
             shutil.copyfile(temp_path, output_file, follow_symlinks=True)  # type: ignore
-            logging.info("Succesfully written file")
+            logging.info("Successfully written file")
         except Exception:
             logging.exception("Failed to copy temp file into target path!")
             raise
 
     except FileNotFoundError:
         logging.exception("File Not Found: Could not complete the merge." +
-                          "Some of the specified files is missing or not " +
+                          "One of the specified files is missing or not " +
                           "readable.")
         raise
     finally:
