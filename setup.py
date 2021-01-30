@@ -8,17 +8,17 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="agg",
-    version="0.3.0",
+    version="0.3.1",
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
-    description="Aggregate files and data",
+    description="Aggregate CSV files",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/RuedigerVoigt/agg",
     package_data={"agg": ["py.typed"]},
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    install_requires=["userprovided>=0.7.3"],
+    install_requires=["userprovided>=0.8.0"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
