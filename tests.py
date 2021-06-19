@@ -45,12 +45,12 @@ def test_return_value():
         ('testfiles/file_01.csv', 'testfiles/file_02.csv'),
         'combined_file.csv',
         True)
-    #assert result['sha256hash'] == 'fff30942d3d042c5128062d1a29b2c50494c3d1d033749a58268d2e687fc98c6'
+    assert result['sha256hash'] == 'fff30942d3d042c5128062d1a29b2c50494c3d1d033749a58268d2e687fc98c6'
     assert result['file_name'] == 'combined_file.csv'
     # not tested result['file_path'] because system dependent
     assert result['first_line_is_header'] is True
-    #assert result['file_size_bytes'] == 76
-    #assert result['line_count'] == 8
+    assert result['file_size_bytes'] == 76
+    assert result['line_count'] == 8
     # Paths depend on the system, but count elements:
     assert len(result['merged_files']) == 2
 

@@ -110,6 +110,11 @@ def merge_csv(files_to_merge: tuple,
         del first_file_ram
         gc.collect()
 
+    # ############## Get Dialect ##############
+
+    with open(files_to_merge[0], newline='') as file:
+        dialect = csv.Sniffer().sniff(file.read(1024))
+
     # ############## Merge Files ##############
 
     merged_files = list()
@@ -121,7 +126,7 @@ def merge_csv(files_to_merge: tuple,
         temp_handle, temp_path = tempfile.mkstemp()
 
         with open(temp_path, 'w') as temp_out:
-            csvwrt = csv.writer(temp_out)
+            csvwrt = csv.writer(temp_out, dialect)
             for i, csvfile in enumerate(files_to_merge):
                 with open(csvfile, 'r', newline='') as in_file:
                     csvrdr = csv.reader(in_file)
