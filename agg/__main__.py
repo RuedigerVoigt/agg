@@ -25,6 +25,31 @@ from typing import Optional, Union
 import userprovided
 
 
+def file_stats(file_to_analyse: pathlib.Path) -> dict:
+    "Gather some statistics about a file and return a dict"
+    # Here a TypedDict would be better for mypy to check typing, but PEP 589
+    # was accepted only as recently as Python 3.8. Therefore as long versions
+    # before that are supported by agg, mypy warning about the 'wrong' type
+    # assigned in the result dictionary will be suppressed.
+    result = dict()
+
+    result['sha256hash'] = userprovided.hashing.calculate_file_hash(
+        pathlib.Path(file_to_analyse), 'sha256')
+
+    result['file_name'] = str(pathlib.Path(file_to_analyse).name)
+
+    # The format of the absolute path is dependent on the OS, but
+    # pathlib.Path() automatically takes care of that:
+    full_path = str(pathlib.Path(file_to_analyse).resolve())
+    result['file_path'] = full_path
+
+    result['line_count'] = len(open(full_path).readlines())  # type: ignore
+
+    result['file_size_bytes'] = pathlib.Path(file_to_analyse).stat().st_size  # type: ignore
+
+    return result
+
+
 def merge_csv(files_to_merge: tuple,
               output_file: Union[str, pathlib.Path],
               first_line_is_header: Optional[bool] = None) -> dict:
@@ -66,8 +91,8 @@ def merge_csv(files_to_merge: tuple,
     # ############## Check Path ##############
 
     if not pathlib.Path(output_file).parent.exists():
-        raise ValueError("Specified folder does not exist. " +
-                         "Cannot create file.")
+        raise ValueError(
+            "Specified folder does not exist. Cannot create file.")
 
     # ############## Check Header ##############
 
@@ -129,28 +154,10 @@ def merge_csv(files_to_merge: tuple,
         os.remove(temp_path)
         gc.collect()
 
-    # Here a TypedDict would be better for mypy to check typing, but PEP 589
-    # was accepted only as recently as Python 3.8. Therefore as long versions
-    # before that are supported by agg, mypy warning about the 'wrong' type
-    # assigned in the result dictionary will be suppressed.
-    result = dict()
+    result = file_stats(pathlib.Path(output_file))
 
-    result['sha256hash'] = userprovided.hashing.calculate_file_hash(
-        pathlib.Path(output_file), 'sha256')
-
-    result['file_name'] = str(pathlib.Path(output_file).name)
-
-    # The format of the absolute path is dependent on the OS, but
-    # pathlib.Path() automatically takes care of that:
-    full_path = str(pathlib.Path(output_file).resolve())
-    result['file_path'] = full_path
-
+    # Add information known to this method
     result['first_line_is_header'] = first_line_is_header  # type: ignore
-
-    result['line_count'] = len(open(full_path).readlines())  # type: ignore
-
-    result['file_size_bytes'] = pathlib.Path(output_file).stat().st_size  # type: ignore
-
     result['merged_files'] = merged_files  # type: ignore
 
     return result
