@@ -135,7 +135,7 @@ def merge_csv(files_to_merge: tuple,
     # assigned in the result dictionary will be suppressed.
     result = dict()
 
-    result['sha256hash'] = userprovided.hash.calculate_file_hash(
+    result['sha256hash'] = userprovided.hashing.calculate_file_hash(
         pathlib.Path(output_file), 'sha256')
 
     result['file_name'] = str(pathlib.Path(output_file).name)
