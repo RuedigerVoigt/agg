@@ -4,7 +4,7 @@
 """
 Agg
 ~~~~~~~~~~~~~~~~~~~~~
-Agg aggregates files / data. This initial version supports merging CSV files-
+Agg merges CSV-files.
 
 Source: https://github.com/RuedigerVoigt/agg
 (c) 2020-2021: Rüdiger Voigt
@@ -26,7 +26,18 @@ import userprovided
 
 
 def file_stats(file_to_analyse: pathlib.Path) -> dict:
-    "Gather some statistics about a file and return a dict"
+    """Gather some statistics about a file
+
+       Args:
+           file_to_analyse: a pathlib path to the file
+
+       Returns:
+           A dictionary containg:
+            * 'sha256hash': a SHA256 hash of the file,
+            * 'file_name': the name of the file without the path,
+            * 'file_path': its *absolute* path,
+            * 'line_count': the number of lines (including the header),
+            * 'file_size_bytes': its size in bytes"""
     # Here a TypedDict would be better for mypy to check typing, but PEP 589
     # was accepted only as recently as Python 3.8. Therefore as long versions
     # before that are supported by agg, mypy warning about the 'wrong' type
@@ -54,7 +65,10 @@ def determine_linebreak(output_newline: Optional[str] = None) -> str:
     """Returns the actual linebreak to use.
        Understands multiple ways to describe the format.
        If None, this returns an empty string meaning 'automatic' depending
-       on the operating system the script is running on."""
+       on the operating system the script is running on.
+
+       Raises:
+           ValueError: if the descriptor is unknown"""
     if output_newline is None:
         return ''
 
