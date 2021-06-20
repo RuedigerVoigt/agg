@@ -17,6 +17,7 @@ import gc
 import logging
 import os
 import pathlib
+import platform
 import shutil
 import tempfile
 from typing import Optional, Union
@@ -86,7 +87,7 @@ def determine_linebreak(output_newline: Optional[str] = None) -> str:
     if output_newline in ('linux', 'unix', 'apple', 'mac', 'macintosh', 'macos'):
         return '\n'
     if output_newline == 'windows':
-        return '\r\n'
+        return '' if platform.system() == 'Windows' else '\r\n'
     raise ValueError('Unknown value for output_newline!')
 
 
