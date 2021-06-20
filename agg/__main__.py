@@ -125,7 +125,7 @@ def merge_csv(files_to_merge: tuple,
         # deleted as soon it is closed.
         temp_handle, temp_path = tempfile.mkstemp()
 
-        with open(temp_path, 'w') as temp_out:
+        with open(temp_path, 'w', newline='\n') as temp_out:
             csvwrt = csv.writer(temp_out, dialect)
             for i, csvfile in enumerate(files_to_merge):
                 with open(csvfile, 'r', newline='') as in_file:
