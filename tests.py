@@ -20,23 +20,7 @@ import platform
 import pytest
 import agg
 
-@pytest.mark.skip(reason="test")
-@pytest.mark.parametrize("input_str,linebreak_str", [
-    # not set
-    (None, ''),
-    # Linux and equivalent
-    ('linux', '\n'),
-    (' LiNuX   ', '\n'),
-    ('unix', '\n'),
-    ('apple', '\n'),
-    ('mac', '\n'),
-    ('macintosh', '\n'),
-    ('macos', '\n'),
-    # Windows
-    ('windows', '\r\n')
-])
-def test_determine_line_break(input_str, linebreak_str):
-    assert agg.determine_linebreak(input_str) == linebreak_str
+
 
 
 def test_determine_linebreak_exceptions():
@@ -86,7 +70,7 @@ def test_return_value():
     # Paths depend on the system, but count elements:
     assert len(result['merged_files']) == 2
 
-@pytest.mark.skipif(platform.system() == 'Linux', reason='temporal')
+@pytest.mark.skipif(platform.system() != 'Windows', reason='temporal')
 def test_return_value_windows_linebreaks():
     # The input files have linux linebreaks
     result = agg.merge_csv(
