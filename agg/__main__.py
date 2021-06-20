@@ -50,9 +50,31 @@ def file_stats(file_to_analyse: pathlib.Path) -> dict:
     return result
 
 
+def determine_linebreak(output_newline: Optional[str] = None) -> str:
+    """Returns the actual linebreak to use.
+       Understands multiple ways to describe the format.
+       If None, this returns an empty string meaning 'automatic' depending
+       on the operating system the script is running on."""
+    if output_newline is None:
+        return ''
+
+    if not isinstance(output_newline, str):
+        raise ValueError("output_newline must be None or a string like " +
+                         "'linux', 'mac', or 'windows'!")
+
+    output_newline = output_newline.strip().lower()
+
+    if output_newline in ('linux', 'unix', 'apple', 'mac', 'macintosh', 'macos'):
+        return '\n'
+    if output_newline == 'windows':
+        return '\r\n'
+    raise ValueError('Unknown value for output_newline!')
+
+
 def merge_csv(files_to_merge: tuple,
               output_file: Union[str, pathlib.Path],
-              first_line_is_header: Optional[bool] = None) -> dict:
+              first_line_is_header: Optional[bool] = None,
+              output_newline: Optional[str] = None) -> dict:
     """Merges multiple CSV files in the order they are specified.
        This will overwrite any existing file with the same name.
 
@@ -118,6 +140,7 @@ def merge_csv(files_to_merge: tuple,
     # ############## Merge Files ##############
 
     merged_files = list()
+    write_format_newline = determine_linebreak(output_newline)
 
     try:
         # Do NOT use tempfile.NamedTemporaryFile as it is platform dependent
@@ -125,7 +148,7 @@ def merge_csv(files_to_merge: tuple,
         # deleted as soon it is closed.
         temp_handle, temp_path = tempfile.mkstemp()
 
-        with open(temp_path, 'w', newline='\n') as temp_out:
+        with open(temp_path, 'w', newline=write_format_newline) as temp_out:
             csvwrt = csv.writer(temp_out, dialect)
             for i, csvfile in enumerate(files_to_merge):
                 with open(csvfile, 'r', newline='') as in_file:
@@ -148,11 +171,11 @@ def merge_csv(files_to_merge: tuple,
             logging.exception("Failed to copy temp file into target path!")
             raise
 
-    except FileNotFoundError:
-        logging.exception("File Not Found: Could not complete the merge." +
-                          "One of the specified files is missing or not " +
-                          "readable.")
-        raise
+    except FileNotFoundError as fnf:
+        msg = ("File Not Found: Could not complete the merge." +
+               "One of the specified files is missing or not readable.")
+        logging.exception(msg)
+        raise FileNotFoundError(msg) from fnf
     finally:
         # mkstemp() requires to explicitly delete the filehandle and file
         os.close(temp_handle)
@@ -162,7 +185,7 @@ def merge_csv(files_to_merge: tuple,
     result = file_stats(pathlib.Path(output_file))
 
     # Add information known to this method
-    result['first_line_is_header'] = first_line_is_header  # type: ignore
-    result['merged_files'] = merged_files  # type: ignore
+    result['first_line_is_header'] = first_line_is_header
+    result['merged_files'] = merged_files
 
     return result
