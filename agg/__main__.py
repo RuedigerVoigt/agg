@@ -36,7 +36,6 @@ def file_stats(file_to_analyse: pathlib.Path) -> dict:
             * 'sha256hash': a SHA256 hash of the file,
             * 'file_name': the name of the file without the path,
             * 'file_path': its *absolute* path,
-            * 'line_count': the number of lines (including the header),
             * 'file_size_bytes': its size in bytes"""
     # Here a TypedDict would be better for mypy to check typing, but PEP 589
     # was accepted only as recently as Python 3.8. Therefore as long versions
@@ -54,11 +53,17 @@ def file_stats(file_to_analyse: pathlib.Path) -> dict:
     full_path = str(pathlib.Path(file_to_analyse).resolve())
     result['file_path'] = full_path
 
-    result['line_count'] = len(open(full_path).readlines())  # type: ignore
-
     result['file_size_bytes'] = pathlib.Path(file_to_analyse).stat().st_size  # type: ignore
 
     return result
+
+
+def count_lines(file_to_analyse: pathlib.Path) -> int:
+    "Return the number of lines in a file"
+    # Separate function as this does not make sense for all kinds of file
+    # and the file_stats method might be used from outside agg.
+    full_path = str(pathlib.Path(file_to_analyse).resolve())
+    return len(open(full_path).readlines())
 
 
 def determine_linebreak(output_newline: Optional[str] = None) -> str:
@@ -197,6 +202,7 @@ def merge_csv(files_to_merge: tuple,
         gc.collect()
 
     result = file_stats(pathlib.Path(output_file))
+    result['line_count'] = count_lines(pathlib.Path(output_file))
 
     # Add information known to this method
     result['first_line_is_header'] = first_line_is_header
