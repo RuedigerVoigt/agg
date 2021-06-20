@@ -86,7 +86,7 @@ def test_return_value():
     # Paths depend on the system, but count elements:
     assert len(result['merged_files']) == 2
 
-@pytest.mark.skipif(platform.system() == 'Linux')
+@pytest.mark.skipif(platform.system() == 'Linux', reason='temporal')
 def test_return_value_windows_linebreaks():
     # The input files have linux linebreaks
     result = agg.merge_csv(
