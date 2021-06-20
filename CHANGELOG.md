@@ -5,6 +5,7 @@
 * Fix bug #1: You now can set the linebreak used in the merged file explicitly. In case you do not set this parameter, the standard linebreaks of your operating system will be used.
 * Update dependency `userprovided`.
 * Report test coverage.
+* Test now also run with `Python 3.10 beta 3` on Ubuntu.
 
 ## Version 0.3.1
 
